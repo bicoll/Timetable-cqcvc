@@ -1,13 +1,13 @@
 package com.evercocer.educationhelper.activitys;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.evercocer.educationhelper.R;
 import com.evercocer.educationhelper.ui.CourseLayout;
@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=2040403192&xnxqid=2020-2021-2&zc=5";
+        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=2040403192&xnxqid=2020-2021-2&zc=6";
         FormBody formBody = new FormBody.Builder().build();
 
         Request request = new Request.Builder()
