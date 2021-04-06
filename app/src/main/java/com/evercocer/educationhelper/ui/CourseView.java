@@ -20,7 +20,6 @@ public class CourseView extends View {
     private String courseName;
     private String courseTeacher;
     private String courseRoom;
-    private int day;
     private int[] chapters;
 
     public CourseView(Context context) {
@@ -94,14 +93,6 @@ public class CourseView extends View {
 
     public void setCourseRoom(String courseRoom) {
         this.courseRoom = courseRoom;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public void setDay(int day) {
-        this.day = day;
     }
 
     public int[] getChapters() {

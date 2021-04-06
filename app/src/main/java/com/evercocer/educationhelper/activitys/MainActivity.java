@@ -31,14 +31,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private List<CourseView> courseViews;
-    private CourseLayout cl_day1;
-    private CourseLayout cl_day2;
-    private CourseLayout cl_day3;
-    private CourseLayout cl_day4;
-    private CourseLayout cl_day5;
-    private CourseLayout cl_day6;
-    private CourseLayout cl_day7;
+    private CourseLayout cl;
     private static final String TAG = "MainActivity";
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -63,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
                     String timetableBody = (String) msg.obj;
                     //解析JSON数据
                     parseData(timetableBody);
-                    //加载CourseView
-                    initCourseView();
                     break;
             }
         }
@@ -72,39 +63,9 @@ public class MainActivity extends AppCompatActivity {
     //okHttp客户端
     private OkHttpClient okHttpClient = new OkHttpClient();
 
-
-    private void initCourseView() {
-        for (CourseView courseView : courseViews) {
-            switch (courseView.getDay()) {
-                case 1:
-                    cl_day1.addView(courseView);
-                    break;
-                case 2:
-                    cl_day2.addView(courseView);
-                    break;
-                case 3:
-                    cl_day3.addView(courseView);
-                    break;
-                case 4:
-                    cl_day4.addView(courseView);
-                    break;
-                case 5:
-                    cl_day5.addView(courseView);
-                    break;
-                case 6:
-                    cl_day6.addView(courseView);
-                    break;
-                case 7:
-                    cl_day7.addView(courseView);
-                    break;
-            }
-        }
-    }
-
     private void parseData(String responseBody) {
         try {
             JSONArray jsonArray = new JSONArray(responseBody);
-            courseViews = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
                 CourseView courseView = new CourseView(this);
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -119,20 +80,19 @@ public class MainActivity extends AppCompatActivity {
                 String courseRoom = jsonObject.getString("jsmc");
                 courseView.setCourseRoom(courseRoom);
                 //时间信息
-                String dataInfo = jsonObject.getString("kcsj");
-                int day = Integer.parseInt(dataInfo.substring(0, 1));
-                courseView.setDay(day);
-                StringBuffer stringBuffer = new StringBuffer(dataInfo.substring(1, dataInfo.length()));
-                int times = (dataInfo.length() / 2);
+                String dateInfo_str = jsonObject.getString("kcsj");
+                int day = Integer.parseInt(dateInfo_str.substring(0, 1));
+                int times = (dateInfo_str.length() / 2)+1;
                 int[] chapters = new int[times];
-                for (int j = 0; j < times; j++) {
+                chapters[0] = day;
+                StringBuffer stringBuffer = new StringBuffer(dateInfo_str.substring(1, dateInfo_str.length()));
+                for (int j = 1; j < times; j++) {
                     int chapter = Integer.parseInt(stringBuffer.substring(0, 2));
                     chapters[j] = chapter;
                     stringBuffer.delete(0, 2);
                 }
-                courseView.setDay(day);
                 courseView.setChapters(chapters);
-                courseViews.add(courseView);
+                cl.addView(courseView);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -181,9 +141,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getCurrentTime();
         setContentView(R.layout.activity_main);
         initViews();
+        getCurrentTime();
     }
 
     private void initData(String week) {
@@ -218,12 +178,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        cl_day1 = findViewById(R.id.cl_day1);
-        cl_day2 = findViewById(R.id.cl_day2);
-        cl_day3 = findViewById(R.id.cl_day3);
-        cl_day4 = findViewById(R.id.cl_day4);
-        cl_day5 = findViewById(R.id.cl_day5);
-        cl_day6 = findViewById(R.id.cl_day6);
-        cl_day7 = findViewById(R.id.cl_day7);
+        cl = findViewById(R.id.cl);
     }
 }

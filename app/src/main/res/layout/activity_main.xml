@@ -76,8 +76,7 @@
                 android:gravity="bottom|center_horizontal"
                 android:text="3"
                 android:textColor="@color/black"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -260,10 +259,6 @@
     </LinearLayout>
 
 
-
-
-
-
     <LinearLayout
         android:id="@+id/ll_week"
         android:layout_width="match_parent"
@@ -443,57 +438,13 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_course"
+
+    <com.evercocer.educationhelper.ui.CourseLayout
+        android:id="@+id/cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/ll_week"
-        android:layout_toRightOf="@id/ll_date"
-        android:background="@color/white"
-        android:orientation="horizontal">
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day2"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day4"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day5"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day6"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <com.evercocer.educationhelper.ui.CourseLayout
-            android:id="@+id/cl_day7"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-    </LinearLayout>
+        android:layout_toRightOf="@id/ll_date" />
 
 
 </RelativeLayout>
