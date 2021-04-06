@@ -1,10 +1,12 @@
-package com.evercocer.educationhelper.ui;
+package com.evercocer.educationhelper.ui.layouts;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+
+import com.evercocer.educationhelper.ui.views.CourseView;
 
 public class CourseLayout extends LinearLayout {
     public CourseLayout(Context context) {

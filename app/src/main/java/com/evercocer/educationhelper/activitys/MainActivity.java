@@ -1,26 +1,28 @@
 package com.evercocer.educationhelper.activitys;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.evercocer.educationhelper.R;
-import com.evercocer.educationhelper.ui.CourseLayout;
-import com.evercocer.educationhelper.ui.CourseView;
+import com.evercocer.educationhelper.ui.layouts.CourseLayout;
+import com.evercocer.educationhelper.ui.views.CourseView;
+import com.evercocer.educationhelper.ui.views.WeekthView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -32,6 +34,7 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity {
 
     private CourseLayout cl;
+    private LinearLayout ll_date;
     private static final String TAG = "MainActivity";
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -44,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
                         //解析时间
                         JSONObject jsonObject = new JSONObject(dateBody);
                         String week = jsonObject.getString("zc");
+                        //添加WeekView
+                        WeekthView weekthView = new WeekthView(MainActivity.this);
+                        weekthView.setWeekTH(week);
+                        weekthView.setmWidth(dip2px(MainActivity.this,45));
+                        weekthView.setmHeight(dip2px(MainActivity.this,42));
+                        ll_date.addView(weekthView,0);
                         String startDay =jsonObject.getString("s_time");
                         String endDay =jsonObject.getString("e_time");
                         //网络请求课表数据
@@ -179,5 +188,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         cl = findViewById(R.id.cl);
+        ll_date = findViewById(R.id.ll_date);
     }
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
 }

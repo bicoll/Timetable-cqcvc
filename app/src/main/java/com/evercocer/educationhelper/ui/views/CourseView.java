@@ -1,4 +1,4 @@
-package com.evercocer.educationhelper.ui;
+package com.evercocer.educationhelper.ui.views;
 
 import android.content.Context;
 import android.graphics.Canvas;

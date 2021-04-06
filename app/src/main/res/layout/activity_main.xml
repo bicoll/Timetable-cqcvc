@@ -11,7 +11,8 @@
         android:layout_alignParentLeft="true"
         android:orientation="vertical">
 
-        <View
+        <com.evercocer.educationhelper.ui.views.WeekthView
+            android:id="@+id/wv"
             android:layout_width="match_parent"
             android:layout_height="45dp" />
 
@@ -439,7 +440,7 @@
     </LinearLayout>
 
 
-    <com.evercocer.educationhelper.ui.CourseLayout
+    <com.evercocer.educationhelper.ui.layouts.CourseLayout
         android:id="@+id/cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
