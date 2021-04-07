@@ -1,271 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/ll_date"
+    <!--展示第几周-->
+    <com.evercocer.educationhelper.ui.views.WeekthView
+        android:id="@+id/wv_weekth"
+        android:layout_width="45dp"
+        android:layout_height="42dp"/>
+    <!--展示章节信息-->
+    <ListView
+        android:id="@+id/lv_chaptersInfo"
         android:layout_width="45dp"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
-        android:orientation="vertical">
-
-        <com.evercocer.educationhelper.ui.views.WeekthView
-            android:id="@+id/wv"
-            android:layout_width="match_parent"
-            android:layout_height="45dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="1"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="8:45"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="1"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="9:40"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="3"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="10:35"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="4"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="11:30"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="5"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="14:55"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="6"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="15:50"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="7"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="16:45"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="8"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="17:40"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="9"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="19:30"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="bottom|center_horizontal"
-                android:text="10"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:gravity="top|center_horizontal"
-                android:text="20:25"
-                android:textColor="#7D7474" />
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
+        android:layout_below="@id/wv_weekth"
+        android:divider="@null"
+        android:background="@color/black"/>
+    <!--展示课表布局-->
+    <com.evercocer.educationhelper.ui.layouts.CourseLayout
+        android:id="@+id/cl_courseLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_week"
+        android:layout_marginLeft="45dp" />
+    <!--展示星期几以及日期-->
     <LinearLayout
         android:id="@+id/ll_week"
         android:layout_width="match_parent"
         android:layout_height="42dp"
+        android:layout_marginLeft="45dp"
         android:layout_marginBottom="3dp"
-        android:layout_toRightOf="@id/ll_date"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -438,14 +202,6 @@
                 android:textSize="13sp" />
         </LinearLayout>
     </LinearLayout>
-
-
-    <com.evercocer.educationhelper.ui.layouts.CourseLayout
-        android:id="@+id/cl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/ll_week"
-        android:layout_toRightOf="@id/ll_date" />
 
 
 </RelativeLayout>

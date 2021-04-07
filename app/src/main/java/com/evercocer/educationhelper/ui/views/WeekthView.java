@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -14,27 +15,6 @@ public class WeekthView extends View {
     private String weekTH = "null";
     private String sx = "";
     private Paint mPaint;
-
-    private int mWidth;
-    private  int mHeight;
-
-
-    public int getmWidth() {
-        return mWidth;
-    }
-
-    public void setmWidth(int mWidth) {
-        this.mWidth = mWidth;
-    }
-
-
-    public int getmHeight() {
-        return mHeight;
-    }
-
-    public void setmHeight(int mHeight) {
-        this.mHeight = mHeight;
-    }
 
     public WeekthView(Context context) {
         this(context, null);
@@ -48,12 +28,6 @@ public class WeekthView extends View {
         super(context, attrs, defStyleAttr);
         mPaint = new Paint();
     }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        setMeasuredDimension(mWidth,mHeight);
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);

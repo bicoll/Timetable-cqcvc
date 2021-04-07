@@ -1,18 +1,19 @@
 package com.evercocer.educationhelper.activitys;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.evercocer.educationhelper.R;
+import com.evercocer.educationhelper.adapters.ChapterListAdapter;
 import com.evercocer.educationhelper.ui.layouts.CourseLayout;
 import com.evercocer.educationhelper.ui.views.CourseView;
 import com.evercocer.educationhelper.ui.views.WeekthView;
@@ -33,9 +34,13 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private CourseLayout cl;
-    private LinearLayout ll_date;
+    private CourseLayout cl_courseLayout;
+    private RelativeLayout rl_main;
+    private WeekthView wv_week;
+    private ListView lv_chapterInfo;
     private static final String TAG = "MainActivity";
+    private OkHttpClient okHttpClient = new OkHttpClient();
+
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -44,35 +49,31 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     String dateBody = (String) msg.obj;
                     try {
-                        //解析时间
+                        //解析时间信息
                         JSONObject jsonObject = new JSONObject(dateBody);
                         String week = jsonObject.getString("zc");
-                        //添加WeekView
-                        WeekthView weekthView = new WeekthView(MainActivity.this);
-                        weekthView.setWeekTH(week);
-                        weekthView.setmWidth(dip2px(MainActivity.this,45));
-                        weekthView.setmHeight(dip2px(MainActivity.this,42));
-                        ll_date.addView(weekthView,0);
-                        String startDay =jsonObject.getString("s_time");
-                        String endDay =jsonObject.getString("e_time");
+                        String startDay = jsonObject.getString("s_time");
+                        String endDay = jsonObject.getString("e_time");
+                        //为WeekthView绑定数据并重绘
+                        wv_week.setWeekTH(week);
+                        wv_week.invalidate();
                         //网络请求课表数据
-                        initData(week);
+                        loadTimetableInfo(week);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
-                case 200:
+                case 2:
                     String timetableBody = (String) msg.obj;
                     //解析JSON数据
-                    parseData(timetableBody);
+                    parseTimetableInfo(timetableBody);
                     break;
             }
         }
     };
-    //okHttp客户端
-    private OkHttpClient okHttpClient = new OkHttpClient();
 
-    private void parseData(String responseBody) {
+    //解析课表信息
+    private void parseTimetableInfo(String responseBody) {
         try {
             JSONArray jsonArray = new JSONArray(responseBody);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 //时间信息
                 String dateInfo_str = jsonObject.getString("kcsj");
                 int day = Integer.parseInt(dateInfo_str.substring(0, 1));
-                int times = (dateInfo_str.length() / 2)+1;
+                int times = (dateInfo_str.length() / 2) + 1;
                 int[] chapters = new int[times];
                 chapters[0] = day;
                 StringBuffer stringBuffer = new StringBuffer(dateInfo_str.substring(1, dateInfo_str.length()));
@@ -101,14 +102,15 @@ public class MainActivity extends AppCompatActivity {
                     stringBuffer.delete(0, 2);
                 }
                 courseView.setChapters(chapters);
-                cl.addView(courseView);
+                cl_courseLayout.addView(courseView);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    public void getCurrentTime() {
+    //加载时间信息
+    public void loadTimeInfo() {
         //获取系统时间
         final Calendar c = Calendar.getInstance();
         int mYear = c.get(Calendar.YEAR);
@@ -116,13 +118,13 @@ public class MainActivity extends AppCompatActivity {
         int mDay = c.get(Calendar.DAY_OF_MONTH);
         String currentTime = mYear + "-" + mMonth + "-" + mDay;
 
-        //POST提交
+        //POST提交获取时间信息
         String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getCurrentTime&currDate=" + currentTime;
         FormBody formBody = new FormBody.Builder().add("", "").build();
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
-                .addHeader("token","BABBFA7442D4F967E7017E2578E413BC")
+                .addHeader("token", "BABBFA7442D4F967E7017E2578E413BC")
                 .build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     String responseBody = response.body().string();
                     Message message = Message.obtain();
                     message.what = 1;
@@ -152,11 +154,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
-        getCurrentTime();
+        loadChapterInfo();
+        loadTimeInfo();
     }
 
-    private void initData(String week) {
-        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=2040403192&xnxqid=2020-2021-2&zc="+week;
+    //加载章节信息
+    private void loadChapterInfo() {
+            String[] data = {"08:45","09:40","10:35","11:30","14:55","15:50","16:45","17:40","19:30","20:25"};
+            lv_chapterInfo.setAdapter(new ChapterListAdapter(MainActivity.this,data));
+    }
+
+    //加载课程表信息
+    private void loadTimetableInfo(String week) {
+        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=2040403192&xnxqid=2020-2021-2&zc=" + week;
         FormBody formBody = new FormBody.Builder().build();
 
         Request request = new Request.Builder()
@@ -179,24 +189,19 @@ public class MainActivity extends AppCompatActivity {
                     String responseBody = response.body().string();
                     Message message = Message.obtain();
                     message.obj = responseBody;
-                    message.what = 200;
+                    message.what = 2;
                     mHandler.sendMessage(message);
                 } else Log.d(TAG, "失败");
             }
         });
     }
 
+    //加载初始化
     private void initViews() {
-        cl = findViewById(R.id.cl);
-        ll_date = findViewById(R.id.ll_date);
-    }
-
-    /**
-     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
-     */
-    public static int dip2px(Context context, float dpValue) {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+        cl_courseLayout = findViewById(R.id.cl_courseLayout);
+        rl_main = findViewById(R.id.rl_main);
+        wv_week = findViewById(R.id.wv_weekth);
+        lv_chapterInfo = findViewById(R.id.lv_chaptersInfo);
     }
 
 }
