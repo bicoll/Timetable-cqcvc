@@ -5,17 +5,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.evercocer.educationhelper.R;
-import com.evercocer.educationhelper.adapters.ChapterListAdapter;
+import com.evercocer.educationhelper.other.DateInfo;
+import com.evercocer.educationhelper.ui.views.ChapterView;
 import com.evercocer.educationhelper.ui.layouts.CourseLayout;
 import com.evercocer.educationhelper.ui.views.CourseView;
+import com.evercocer.educationhelper.ui.views.DateInfoView;
 import com.evercocer.educationhelper.ui.views.WeekthView;
 
 import org.json.JSONArray;
@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import okhttp3.Call;
@@ -37,8 +38,10 @@ public class MainActivity extends AppCompatActivity {
     private CourseLayout cl_courseLayout;
     private RelativeLayout rl_main;
     private WeekthView wv_week;
-    private ListView lv_chapterInfo;
+    private ChapterView cv_chapterInfo;
+    private ArrayList<DateInfo> dateInfos;
     private static final String TAG = "MainActivity";
+    private DateInfoView dateInfoView;
     private OkHttpClient okHttpClient = new OkHttpClient();
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -51,12 +54,15 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         //解析时间信息
                         JSONObject jsonObject = new JSONObject(dateBody);
+                        //起始周
                         String week = jsonObject.getString("zc");
-                        String startDay = jsonObject.getString("s_time");
-                        String endDay = jsonObject.getString("e_time");
                         //为WeekthView绑定数据并重绘
                         wv_week.setWeekTH(week);
                         wv_week.invalidate();
+                        //起始时间
+                        String beginDay_str = jsonObject.getString("s_time");
+                        //解析日期信息并刷新DateInfoView
+                        parseDate(beginDay_str);
                         //网络请求课表数据
                         loadTimetableInfo(week);
                     } catch (Exception e) {
@@ -65,14 +71,37 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 2:
                     String timetableBody = (String) msg.obj;
-                    //解析JSON数据
+                    //解析课表数据信息,绑定CourseView
                     parseTimetableInfo(timetableBody);
                     break;
             }
         }
     };
 
-    //解析课表信息
+    //解析日期信息并刷新DateInfoView
+    private void parseDate(String beginDay_str) {
+        String[] split = beginDay_str.split("-");
+        int[] beginDay_intArry = new int[3];
+        for (int i = 0; i < beginDay_intArry.length; i++) {
+            beginDay_intArry[i] = Integer.parseInt(split[i]);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(beginDay_intArry[0], beginDay_intArry[1], beginDay_intArry[2] + 1);
+        dateInfos = new ArrayList<>();
+        int beginMonth = calendar.get(Calendar.MONTH);
+        int beginDay = calendar.get(Calendar.DAY_OF_MONTH);
+        dateInfos.add(new DateInfo(beginMonth, beginDay));
+        for (int i = 0; i < 6; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            dateInfos.add(new DateInfo(month, day));
+        }
+        dateInfoView.setDateInfos(dateInfos);
+        dateInfoView.invalidate();
+    }
+
+    //解析课表信息并刷新CourseView
     private void parseTimetableInfo(String responseBody) {
         try {
             JSONArray jsonArray = new JSONArray(responseBody);
@@ -160,8 +189,9 @@ public class MainActivity extends AppCompatActivity {
 
     //加载章节信息
     private void loadChapterInfo() {
-            String[] data = {"08:45","09:40","10:35","11:30","14:55","15:50","16:45","17:40","19:30","20:25"};
-            lv_chapterInfo.setAdapter(new ChapterListAdapter(MainActivity.this,data));
+        String[] data = {"08:45", "09:40", "10:35", "11:30", "14:55", "15:50", "16:45", "17:40", "19:30", "20:25"};
+        cv_chapterInfo.setChapterInfo(data);
+        cv_chapterInfo.invalidate();
     }
 
     //加载课程表信息
@@ -201,7 +231,8 @@ public class MainActivity extends AppCompatActivity {
         cl_courseLayout = findViewById(R.id.cl_courseLayout);
         rl_main = findViewById(R.id.rl_main);
         wv_week = findViewById(R.id.wv_weekth);
-        lv_chapterInfo = findViewById(R.id.lv_chaptersInfo);
+        cv_chapterInfo = findViewById(R.id.cv_chapterInfo);
+        dateInfoView = findViewById(R.id.div_dateInfo);
     }
 
 }
