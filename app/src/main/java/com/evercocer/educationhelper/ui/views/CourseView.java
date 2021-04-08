@@ -22,6 +22,16 @@ public class CourseView extends View {
     private String courseRoom;
     private int[] chapters;
 
+    public int[] getRgbColor() {
+        return rgbColor;
+    }
+
+    public void setRgbColor(int[] rgbColor) {
+        this.rgbColor = rgbColor;
+    }
+
+    private int[] rgbColor;
+
     public CourseView(Context context) {
         this(context, null);
     }
@@ -46,7 +56,7 @@ public class CourseView extends View {
         //画圆角矩形背景
         RectF rectF = new RectF(1.25f, 5, width - 1.25f, height - 5);
         //mPaint.setARGB(0,131,175,155);
-        mPaint.setColor(Color.rgb(131, 175, 155));
+        mPaint.setColor(Color.rgb(rgbColor[0], rgbColor[1], rgbColor[2]));
         canvas.drawRoundRect(rectF, 20, 20, mPaint);
 
         //画第一个文本(课程以及授课教师)

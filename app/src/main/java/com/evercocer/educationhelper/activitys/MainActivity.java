@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -105,6 +106,30 @@ public class MainActivity extends AppCompatActivity {
     private void parseTimetableInfo(String responseBody) {
         try {
             JSONArray jsonArray = new JSONArray(responseBody);
+            //加载颜色
+            ArrayList<int[]> colors = new ArrayList<>();
+            int[] color1 = {25, 202, 173};
+            int[] color2 = {236, 173, 158};
+            int[] color3 = {190, 231, 233};
+            int[] color4 = {214, 213, 183};
+            int[] color5 = {244, 96, 108};
+            int[] color6 = {209, 186, 116};
+            int[] color7 = {190, 237, 199};
+            int[] color8 = {230, 206, 172};
+            int[] color9 = {140, 199, 181};
+            int[] color10 = {160, 238, 225};
+
+            colors.add(color1);
+            colors.add(color2);
+            colors.add(color3);
+            colors.add(color4);
+            colors.add(color5);
+            colors.add(color6);
+            colors.add(color7);
+            colors.add(color8);
+            colors.add(color9);
+            colors.add(color10);
+
             for (int i = 0; i < jsonArray.length(); i++) {
                 CourseView courseView = new CourseView(this);
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -131,6 +156,43 @@ public class MainActivity extends AppCompatActivity {
                     stringBuffer.delete(0, 2);
                 }
                 courseView.setChapters(chapters);
+
+                int[] color = {123, 43, 56};
+                Random random = new Random();
+                switch (random.nextInt(10)) {
+                    case 0:
+                        color = colors.get(0);
+                        break;
+                    case 1:
+                        color = colors.get(1);
+                        break;
+                    case 2:
+                        color = colors.get(2);
+                        break;
+                    case 3:
+                        color = colors.get(3);
+                        break;
+                    case 4:
+                        color = colors.get(4);
+                        break;
+                    case 5:
+                        color = colors.get(5);
+                        break;
+                    case 6:
+                        color = colors.get(6);
+                        break;
+                    case 7:
+                        color = colors.get(7);
+                        break;
+                    case 8:
+                        color = colors.get(8);
+                        break;
+                    case 9:
+                        color = colors.get(9);
+                        break;
+
+                }
+                courseView.setRgbColor(color);
                 cl_courseLayout.addView(courseView);
             }
         } catch (JSONException e) {

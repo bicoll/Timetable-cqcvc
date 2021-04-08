@@ -77,7 +77,7 @@ public class DateInfoView extends View {
                     week = "周七";
                     break;
             }
-            mPaint.setTextSize(40);
+            mPaint.setTextSize(35);
             mPaint.setColor(Color.rgb(41, 36, 33));
             mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
             canvas.drawText(week, width, height, mPaint);
