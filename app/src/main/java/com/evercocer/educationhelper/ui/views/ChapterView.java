@@ -49,8 +49,9 @@ public class ChapterView extends View {
             canvas.drawText(String.valueOf(i + 1), getWidth() / 3, baseY, mPaint);
 
             mPaint.setColor(Color.rgb(192,192,192));
-            mPaint.setTextSize(20);
-            baseX = 20;
+            mPaint.setTypeface(Typeface.DEFAULT);
+            mPaint.setTextSize(25);
+            baseX = 15;
             baseY += 30;
             canvas.drawText(chapterInfo[i],baseX,baseY,mPaint);
         }

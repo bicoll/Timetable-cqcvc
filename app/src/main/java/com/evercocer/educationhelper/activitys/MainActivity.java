@@ -207,6 +207,9 @@ public class MainActivity extends AppCompatActivity {
         int mYear = c.get(Calendar.YEAR);
         int mMonth = c.get(Calendar.MONTH) + 1;
         int mDay = c.get(Calendar.DAY_OF_MONTH);
+        if (c.get(Calendar.DAY_OF_WEEK) == 1){
+            mDay--;
+        }
         String currentTime = mYear + "-" + mMonth + "-" + mDay;
 
         //POST提交获取时间信息

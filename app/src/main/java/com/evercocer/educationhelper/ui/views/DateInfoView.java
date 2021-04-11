@@ -13,6 +13,7 @@ import androidx.annotation.Nullable;
 import com.evercocer.educationhelper.other.DateInfo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class DateInfoView extends View {
     private ArrayList<DateInfo> dateInfos;
@@ -52,8 +53,11 @@ public class DateInfoView extends View {
         int height = getHeight() / 2;
         int width = 0;
         String week = "星期";
+        Calendar calendar = Calendar.getInstance();
+        int now = calendar.get(Calendar.DAY_OF_MONTH);
+
         for (int i = 0; i < 7; i++) {
-            width = singleWidth * i +20;
+            width = singleWidth * i + 20;
             switch (i) {
                 case 0:
                     week = "周一";
@@ -74,18 +78,21 @@ public class DateInfoView extends View {
                     week = "周六";
                     break;
                 case 6:
-                    week = "周七";
+                    week = "周日";
                     break;
             }
             mPaint.setTextSize(35);
+            DateInfo dateInfo = dateInfos.get(i);
             mPaint.setColor(Color.rgb(41, 36, 33));
             mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+
             canvas.drawText(week, width, height, mPaint);
 
-            mPaint.setTextSize(20);
-            mPaint.setColor(Color.rgb(192,192,192));
-            DateInfo dateInfo = dateInfos.get(i);
-            canvas.drawText(dateInfo.getMonth()+"-"+dateInfo.getDay(),width+20,height+30,mPaint);
+            mPaint.setTextSize(25);
+            mPaint.setColor(Color.rgb(192, 192, 192));
+            if (now == dateInfo.getDay())
+                mPaint.setColor(Color.rgb(41, 36, 33));
+            canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 20, height + 30, mPaint);
         }
     }
 }

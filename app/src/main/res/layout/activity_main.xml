@@ -7,7 +7,7 @@
     <com.evercocer.educationhelper.ui.views.WeekthView
         android:id="@+id/wv_weekth"
         android:layout_width="45dp"
-        android:layout_height="42dp" />
+        android:layout_height="45dp" />
     <!--展示章节信息-->
     <com.evercocer.educationhelper.ui.views.ChapterView
         android:id="@+id/cv_chapterInfo"
