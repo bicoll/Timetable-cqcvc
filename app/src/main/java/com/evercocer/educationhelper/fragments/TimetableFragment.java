@@ -31,6 +31,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -83,24 +84,6 @@ public class TimetableFragment extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    String dateBody = (String) msg.obj;
-                    try {
-                        //解析时间信息
-                        JSONObject jsonObject = new JSONObject(dateBody);
-                        //起始周
-                        String week = jsonObject.getString("zc");
-                        //为WeekthView绑定数据并重绘
-                        wv_week.setWeekTH(week);
-                        wv_week.invalidate();
-                        //起始时间
-                        String beginDay_str = jsonObject.getString("s_time");
-                        //解析日期信息并刷新DateInfoView
-                        parseDate(beginDay_str);
-                        //网络请求课表数据
-                        loadTimetableInfo(week);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     break;
                 case 2:
                     String timetableBody = (String) msg.obj;
@@ -129,68 +112,39 @@ public class TimetableFragment extends Fragment {
 
     //加载时间信息
     public void loadTimeInfo() {
-        //获取系统时间
-        final Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH) + 1;
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-        if (c.get(Calendar.DAY_OF_WEEK) == 1){
-            mDay--;
-        }
-        String currentTime = mYear + "-" + mMonth + "-" + mDay;
+        Calendar mCalendar = Calendar.getInstance();
+        Date time = mCalendar.getTime();
+        //设置一周的第一天为星期一
+        mCalendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        //POST提交获取时间信息
-        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getCurrentTime&currDate=" + currentTime;
-        FormBody formBody = new FormBody.Builder().add("", "").build();
-        Request request = new Request.Builder()
-                .url(url)
-                .post(formBody)
-                .addHeader("token", "BABBFA7442D4F967E7017E2578E413BC")
-                .build();
-        Call call = okHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "时间获取失败");
-                e.printStackTrace();
-            }
+        //将日期定位到开学第一天
+        mCalendar.set(2021,1,28);
+        //获取开学时日期这一年的是第几周
+        int weekBegin = mCalendar.get(Calendar.WEEK_OF_YEAR);
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    Message message = Message.obtain();
-                    message.what = 1;
-                    message.obj = responseBody;
-                    mHandler.sendMessage(message);
-                }
-
-            }
-        });
-
-    }
-
-    //解析日期信息并刷新DateInfoView
-    private void parseDate(String beginDay_str) {
-        String[] split = beginDay_str.split("-");
-        int[] beginDay_intArry = new int[3];
-        for (int i = 0; i < beginDay_intArry.length; i++) {
-            beginDay_intArry[i] = Integer.parseInt(split[i]);
-        }
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(beginDay_intArry[0], beginDay_intArry[1], beginDay_intArry[2] + 1);
+        //将日期定位到当前周星期一
+        mCalendar.setTime(time);
+        mCalendar.set(Calendar.DAY_OF_WEEK,2);
+        //获取当前周是这一年的第几周
+        int weekNow = mCalendar.get(Calendar.WEEK_OF_YEAR);
+        //获取当前周是这学期的第几周
+        String weekTh = String.valueOf(weekNow - weekBegin);
+        //为WeekthView绑定数据
+        wv_week.setWeekTH(weekTh);
+        //为DateInfoView绑定数据
         dateInfos = new ArrayList<>();
-        int beginMonth = calendar.get(Calendar.MONTH);
-        int beginDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int beginMonth = mCalendar.get(Calendar.MONTH)+1;
+        int beginDay = mCalendar.get(Calendar.DAY_OF_MONTH);
         dateInfos.add(new DateInfo(beginMonth, beginDay));
         for (int i = 0; i < 6; i++) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            mCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            int month = mCalendar.get(Calendar.MONTH)+1;
+            int day = mCalendar.get(Calendar.DAY_OF_MONTH);
             dateInfos.add(new DateInfo(month, day));
         }
         dateInfoView.setDateInfos(dateInfos);
-        dateInfoView.invalidate();
+        //网络获取课表信息(Post)
+        loadTimetableInfo(weekTh);
     }
 
     //解析课表信息并刷新CourseView

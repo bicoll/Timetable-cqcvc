@@ -47,8 +47,6 @@ public class DateInfoView extends View {
         super.onDraw(canvas);
         if (dateInfos == null)
             return;
-
-
         int singleWidth = getWidth() / 7;
         int height = getHeight() / 2;
         int width = 0;
@@ -92,7 +90,7 @@ public class DateInfoView extends View {
             mPaint.setColor(Color.rgb(192, 192, 192));
             if (now == dateInfo.getDay())
                 mPaint.setColor(Color.rgb(41, 36, 33));
-            canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 20, height + 30, mPaint);
+            canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 15, height + 30, mPaint);
         }
     }
 }

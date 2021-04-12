@@ -31,9 +31,8 @@ public class WeekthView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (weekTH == null) {
+        if (weekTH == null)
             return;
-        }
         mPaint.setColor(Color.BLUE);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.FILL);
