@@ -2,52 +2,120 @@ package com.evercocer.educationhelper.activitys;
 
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
-import android.widget.RelativeLayout;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.evercocer.educationhelper.R;
+import com.evercocer.educationhelper.fragments.MeFragment;
+import com.evercocer.educationhelper.fragments.SearchFragment;
 import com.evercocer.educationhelper.fragments.TimetableFragment;
-import com.evercocer.educationhelper.other.DateInfo;
-import com.evercocer.educationhelper.ui.views.ChapterView;
-import com.evercocer.educationhelper.ui.layouts.CourseLayout;
-import com.evercocer.educationhelper.ui.views.CourseView;
-import com.evercocer.educationhelper.ui.views.DateInfoView;
-import com.evercocer.educationhelper.ui.views.WeekthView;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Random;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
+
+    private BottomNavigationView bNav;
+    private FragmentManager fragmentManager;
+    private Fragment timetableFragment;
+    private Fragment searchFragment;
+    private Fragment meFragment;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        intViews();
+        initDefaultFragment();
+        Log.d(TAG, "MainActivity " + "onCreate");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "MainActivity " + "onStart");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "MainActivity " + "onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "MainActivity " + "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "MainActivity " + "onStop");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "MainActivity " + "onRestart");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "MainActivity " + "onDestroy");
+    }
+
+    private void initDefaultFragment() {
+        if (timetableFragment == null)
+            timetableFragment = new TimetableFragment();
+
+        fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.rl_main_container, new TimetableFragment())
+        fragmentTransaction.replace(R.id.fl_main_content, timetableFragment)
                 .commit();
+    }
+
+    private void intViews() {
+        bNav = findViewById(R.id.bnv_main);
+        bNav.getMenu().getItem(0).setChecked(true);
+        bNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                switch (item.getItemId()) {
+                    case R.id.item_timetable:
+                        item.setChecked(true);
+                        if (timetableFragment == null) {
+                            timetableFragment = new TimetableFragment();
+                        }
+                        fragmentTransaction.replace(R.id.fl_main_content, timetableFragment);
+                        break;
+                    case R.id.item_search:
+                        item.setChecked(true);
+                        if (searchFragment == null) {
+                            searchFragment = new SearchFragment();
+                        }
+                        fragmentTransaction.replace(R.id.fl_main_content, searchFragment);
+                        break;
+                    case R.id.item_me:
+                        item.setChecked(true);
+                        if (meFragment == null) {
+                            meFragment = new MeFragment();
+                        }
+                        fragmentTransaction.replace(R.id.fl_main_content, meFragment);
+                        break;
+                }
+                fragmentTransaction.commit();
+                return false;
+            }
+        });
     }
 
 }

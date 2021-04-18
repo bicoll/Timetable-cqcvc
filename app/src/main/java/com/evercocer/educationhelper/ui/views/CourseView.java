@@ -80,7 +80,6 @@ public class CourseView extends View {
         secondPartLayout.draw(canvas);
     }
 
-
     public String getCourseName() {
         return courseName;
     }

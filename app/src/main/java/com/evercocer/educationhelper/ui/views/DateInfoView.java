@@ -79,9 +79,11 @@ public class DateInfoView extends View {
                     week = "周日";
                     break;
             }
-            mPaint.setTextSize(35);
             DateInfo dateInfo = dateInfos.get(i);
+            mPaint.setTextSize(35);
             mPaint.setColor(Color.rgb(41, 36, 33));
+            if (now == dateInfo.getDay())
+                mPaint.setColor(Color.BLUE);
             mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
             canvas.drawText(week, width, height, mPaint);
@@ -89,8 +91,8 @@ public class DateInfoView extends View {
             mPaint.setTextSize(25);
             mPaint.setColor(Color.rgb(192, 192, 192));
             if (now == dateInfo.getDay())
-                mPaint.setColor(Color.rgb(41, 36, 33));
-            canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 15, height + 30, mPaint);
+                mPaint.setColor(Color.BLUE);
+            canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 10, height + 30, mPaint);
         }
     }
 }

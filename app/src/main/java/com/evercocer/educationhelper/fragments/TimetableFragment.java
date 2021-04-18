@@ -2,6 +2,7 @@ package com.evercocer.educationhelper.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,12 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.evercocer.educationhelper.R;
+import com.evercocer.educationhelper.activitys.MainActivity;
 import com.evercocer.educationhelper.other.DateInfo;
 import com.evercocer.educationhelper.ui.layouts.CourseLayout;
 import com.evercocer.educationhelper.ui.views.ChapterView;
@@ -44,23 +47,29 @@ import okhttp3.Response;
 public class TimetableFragment extends Fragment {
     private Activity activity;
     private CourseLayout cl_courseLayout;
-    private RelativeLayout rl_main;
+    private RelativeLayout rl_timetable_container;
     private WeekthView wv_week;
     private ChapterView cv_chapterInfo;
     private ArrayList<DateInfo> dateInfos;
     private static final String TAG = "MainActivity";
     private DateInfoView dateInfoView;
     private OkHttpClient okHttpClient = new OkHttpClient();
+    private SharedPreferences sharedPreferences;
+    private String token;
+    private String account_str;
+
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.activity = (Activity) context;
+        Log.d(TAG, "TimetableFragment "+"onAttach");
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "TimetableFragment "+"onCreate");
     }
 
     @Nullable
@@ -69,13 +78,47 @@ public class TimetableFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
         initViews(view);
         loadChapterInfo();
+        Log.d(TAG, "TimetableFragment "+"onCreateView");
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "TimetableFragment "+"onResume");
+        Log.d(TAG, token);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "TimetableFragment "+"onStart");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "TimetableFragment "+"onStop");
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(TAG, "TimetableFragment "+"onDestroyView");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "TimetableFragment "+"onPause");
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        sharedPreferences = getActivity().getSharedPreferences("userInfo",Context.MODE_PRIVATE);
         loadTimeInfo();
+        Log.d(TAG, "TimetableFragment "+"onActivityCreated");
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -83,10 +126,12 @@ public class TimetableFragment extends Fragment {
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case 1:
-                    break;
                 case 2:
                     String timetableBody = (String) msg.obj;
+                    if (timetableBody.length()<20) {
+                        Toast.makeText(getContext(), "账号有误!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     //解析课表数据信息,绑定CourseView
                     parseTimetableInfo(timetableBody);
                     break;
@@ -97,7 +142,7 @@ public class TimetableFragment extends Fragment {
     //初始化View
     public void initViews(View view) {
         cl_courseLayout = view.findViewById(R.id.cl_main_courseLayout);
-        rl_main = view.findViewById(R.id.rl_main_container);
+        rl_timetable_container = view.findViewById(R.id.rl_timetable_container);
         wv_week = view.findViewById(R.id.wv_main_weekth);
         cv_chapterInfo = view.findViewById(R.id.cv_main_chapterInfo);
         dateInfoView = view.findViewById(R.id.div_main_dateInfo);
@@ -107,7 +152,6 @@ public class TimetableFragment extends Fragment {
     private void loadChapterInfo() {
         String[] data = {"08:45", "09:40", "10:35", "11:30", "14:55", "15:50", "16:45", "17:40", "19:30", "20:25"};
         cv_chapterInfo.setChapterInfo(data);
-        cv_chapterInfo.invalidate();
     }
 
     //加载时间信息
@@ -149,31 +193,31 @@ public class TimetableFragment extends Fragment {
 
     //解析课表信息并刷新CourseView
     private void parseTimetableInfo(String responseBody) {
+        //加载颜色
+        ArrayList<int[]> colors = new ArrayList<>();
+        int[] color1 = {25, 202, 173};
+        int[] color2 = {236, 173, 158};
+        int[] color3 = {190, 231, 233};
+        int[] color4 = {214, 213, 183};
+        int[] color5 = {244, 96, 108};
+        int[] color6 = {209, 186, 116};
+        int[] color7 = {190, 237, 199};
+        int[] color8 = {230, 206, 172};
+        int[] color9 = {140, 199, 181};
+        int[] color10 = {160, 238, 225};
+
+        colors.add(color1);
+        colors.add(color2);
+        colors.add(color3);
+        colors.add(color4);
+        colors.add(color5);
+        colors.add(color6);
+        colors.add(color7);
+        colors.add(color8);
+        colors.add(color9);
+        colors.add(color10);
         try {
             JSONArray jsonArray = new JSONArray(responseBody);
-            //加载颜色
-            ArrayList<int[]> colors = new ArrayList<>();
-            int[] color1 = {25, 202, 173};
-            int[] color2 = {236, 173, 158};
-            int[] color3 = {190, 231, 233};
-            int[] color4 = {214, 213, 183};
-            int[] color5 = {244, 96, 108};
-            int[] color6 = {209, 186, 116};
-            int[] color7 = {190, 237, 199};
-            int[] color8 = {230, 206, 172};
-            int[] color9 = {140, 199, 181};
-            int[] color10 = {160, 238, 225};
-
-            colors.add(color1);
-            colors.add(color2);
-            colors.add(color3);
-            colors.add(color4);
-            colors.add(color5);
-            colors.add(color6);
-            colors.add(color7);
-            colors.add(color8);
-            colors.add(color9);
-            colors.add(color10);
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 CourseView courseView = new CourseView(activity);
@@ -181,7 +225,7 @@ public class TimetableFragment extends Fragment {
                 //课程名称
                 String courseName = jsonObject.getString("kcmc");
                 courseView.setCourseName(courseName);
-                Log.d(TAG, courseName);
+//                Log.d(TAG, courseName);
                 //授课老师
                 String courseTeacher = "@" + jsonObject.getString("jsxm") ;
                 courseView.setCourseTeacher(courseTeacher);
@@ -202,42 +246,42 @@ public class TimetableFragment extends Fragment {
                 }
                 courseView.setChapters(chapters);
 
-                int[] color = {123, 43, 56};
-                Random random = new Random();
-                switch (random.nextInt(10)) {
+                switch (new Random().nextInt(10)) {
                     case 0:
-                        color = colors.get(0);
+                        courseView.setRgbColor(colors.get(0));
                         break;
                     case 1:
-                        color = colors.get(1);
+                        courseView.setRgbColor(colors.get(1));
                         break;
                     case 2:
-                        color = colors.get(2);
+                        courseView.setRgbColor(colors.get(2));
                         break;
                     case 3:
-                        color = colors.get(3);
+                        courseView.setRgbColor(colors.get(3));
                         break;
                     case 4:
-                        color = colors.get(4);
+                        courseView.setRgbColor(colors.get(4));
                         break;
                     case 5:
-                        color = colors.get(5);
+                        courseView.setRgbColor(colors.get(5));
                         break;
                     case 6:
-                        color = colors.get(6);
+                        courseView.setRgbColor(colors.get(6));
                         break;
                     case 7:
-                        color = colors.get(7);
+                        courseView.setRgbColor(colors.get(7));
                         break;
                     case 8:
-                        color = colors.get(8);
+                        courseView.setRgbColor(colors.get(8));
                         break;
                     case 9:
-                        color = colors.get(9);
+                        courseView.setRgbColor(colors.get(9));
+                        break;
+                    default:
+                        courseView.setRgbColor(colors.get(0));
                         break;
 
                 }
-                courseView.setRgbColor(color);
                 cl_courseLayout.addView(courseView);
             }
         } catch (JSONException e) {
@@ -247,13 +291,21 @@ public class TimetableFragment extends Fragment {
 
     //加载课程表信息
     private void loadTimetableInfo(String week) {
-        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=2040403192&xnxqid=2020-2021-2&zc=" + week;
+        token = sharedPreferences.getString("token",null);
+        account_str = sharedPreferences.getString("userName",null);
+        if (token == null) {
+            Toast.makeText(getActivity(),"MainActivity:Token is null!",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh="+ account_str +"&xnxqid=2020-2021-2&zc=" + week;
+
         FormBody formBody = new FormBody.Builder().build();
 
         Request request = new Request.Builder()
                 .url(url)
                 .post(formBody)
-                .addHeader("token", "BABBFA7442D4F967E7017E2578E413BC")
+                .addHeader("token", token)
                 .build();
 
         Call call = okHttpClient.newCall(request);
@@ -267,9 +319,9 @@ public class TimetableFragment extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
                     Message message = Message.obtain();
-                    message.obj = responseBody;
+
+                    message.obj =  response.body().string();
                     message.what = 2;
                     mHandler.sendMessage(message);
                 } else Log.d(TAG, "失败");

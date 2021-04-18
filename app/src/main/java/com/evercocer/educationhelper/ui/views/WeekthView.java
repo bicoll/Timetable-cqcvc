@@ -3,6 +3,7 @@ package com.evercocer.educationhelper.ui.views;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
