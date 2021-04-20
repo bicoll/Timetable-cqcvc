@@ -1,34 +1,27 @@
 package com.evercocer.educationhelper.activitys;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.evercocer.educationhelper.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -73,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } catch (JSONException e) {
-                    Toast.makeText(LoginActivity.this, "异常:"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "异常:" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -110,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 password_str = passWord.getText().toString();
-                password_str = password_str ==null?"1":password_str;
+                password_str = password_str == null ? "1" : password_str;
                 String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=authUser";
                 url += "&xh=" + account_str + "&pwd=" + password_str;
                 FormBody formBody = new FormBody.Builder().add("", "").build();

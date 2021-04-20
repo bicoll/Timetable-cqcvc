@@ -45,7 +45,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 public class TimetableFragment extends Fragment {
-    private Activity activity;
     private CourseLayout cl_courseLayout;
     private RelativeLayout rl_timetable_container;
     private WeekthView wv_week;
@@ -58,59 +57,18 @@ public class TimetableFragment extends Fragment {
     private String token;
     private String account_str;
 
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.activity = (Activity) context;
-        Log.d(TAG, "TimetableFragment "+"onAttach");
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.d(TAG, "TimetableFragment "+"onCreate");
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timetable, container, false);
-        initViews(view);
-        loadChapterInfo();
-        Log.d(TAG, "TimetableFragment "+"onCreateView");
         return view;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "TimetableFragment "+"onResume");
-        Log.d(TAG, token);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "TimetableFragment "+"onStart");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "TimetableFragment "+"onStop");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG, "TimetableFragment "+"onDestroyView");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "TimetableFragment "+"onPause");
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViews(view);
+        loadChapterInfo();
     }
 
     @Override
@@ -118,7 +76,6 @@ public class TimetableFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences("userInfo",Context.MODE_PRIVATE);
         loadTimeInfo();
-        Log.d(TAG, "TimetableFragment "+"onActivityCreated");
     }
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -220,7 +177,7 @@ public class TimetableFragment extends Fragment {
             JSONArray jsonArray = new JSONArray(responseBody);
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                CourseView courseView = new CourseView(activity);
+                CourseView courseView = new CourseView(getActivity());
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 //课程名称
                 String courseName = jsonObject.getString("kcmc");
