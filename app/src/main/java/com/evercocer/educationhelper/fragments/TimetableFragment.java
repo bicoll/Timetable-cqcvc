@@ -249,7 +249,7 @@ public class TimetableFragment extends Fragment {
     //加载课程表信息
     private void loadTimetableInfo(String week) {
         token = sharedPreferences.getString("token",null);
-        account_str = sharedPreferences.getString("userName",null);
+        account_str = sharedPreferences.getString("account",null);
         if (token == null) {
             Toast.makeText(getActivity(),"MainActivity:Token is null!",Toast.LENGTH_SHORT).show();
             return;
