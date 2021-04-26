@@ -36,7 +36,7 @@ public class CourseLayout extends LinearLayout {
 
         for (int i = 0; i < getChildCount(); i++) {
             CourseView courseView = (CourseView) getChildAt(i);
-            int[] chapters = courseView.getChapters();
+            int[] chapters = courseView.getCourseInfo().getChapterInfo();
             left =( chapters[0]-1)*singleWidth;
             top = (chapters[1] - 1) * singleHeight;
             right = left +singleWidth;

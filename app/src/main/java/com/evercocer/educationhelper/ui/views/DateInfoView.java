@@ -10,7 +10,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import com.evercocer.educationhelper.other.DateInfo;
+import com.evercocer.educationhelper.model.DateInfo;
 
 import java.util.ArrayList;
 import java.util.Calendar;

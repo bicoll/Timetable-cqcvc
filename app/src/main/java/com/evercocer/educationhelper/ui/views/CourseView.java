@@ -14,22 +14,12 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import com.evercocer.educationhelper.model.CourseInfo;
+
 public class CourseView extends View {
     private Paint mPaint;
     private TextPaint textPaint;
-    private String courseName;
-    private String courseTeacher;
-    private String courseRoom;
-    private int[] chapters;
-
-    public int[] getRgbColor() {
-        return rgbColor;
-    }
-
-    public void setRgbColor(int[] rgbColor) {
-        this.rgbColor = rgbColor;
-    }
-
+    private CourseInfo courseInfo;
     private int[] rgbColor;
 
     public CourseView(Context context) {
@@ -55,7 +45,6 @@ public class CourseView extends View {
         int height = getHeight();
         //画圆角矩形背景
         RectF rectF = new RectF(1.25f, 5, width - 1.25f, height - 5);
-        //mPaint.setARGB(0,131,175,155);
         mPaint.setColor(Color.rgb(rgbColor[0], rgbColor[1], rgbColor[2]));
         canvas.drawRoundRect(rectF, 20, 20, mPaint);
 
@@ -64,7 +53,7 @@ public class CourseView extends View {
         textPaint.setColor(Color.WHITE);
         textPaint.setStyle(Paint.Style.FILL);
         textPaint.setTextSize(28);
-        String info = courseName + courseTeacher;
+        String info = courseInfo.getCourse() + courseInfo.getTeacher();
         StaticLayout firstPartLayout = StaticLayout.Builder.obtain(info, 0, info.length(), textPaint, width - 20).build();
         canvas.translate(15, 30);
         firstPartLayout.draw(canvas);
@@ -73,42 +62,25 @@ public class CourseView extends View {
         //计算第二个文本的高度
         int firstPartHeight = firstPartLayout.getHeight();
         int secondPartHeight = ((height - firstPartHeight) / 2)+firstPartHeight;
-        /*mPaint.setColor(Color.RED);
-        canvas.drawLine(0,firstPartHeight,width,firstPartHeight,mPaint);*/
-        StaticLayout secondPartLayout = StaticLayout.Builder.obtain(courseRoom, 0, courseRoom.length(), textPaint, width - 10).build();
+        String classRoom = courseInfo.getClassRoom();
+        StaticLayout secondPartLayout = StaticLayout.Builder.obtain(classRoom, 0, classRoom.length(), textPaint, width - 10).build();
         canvas.translate(0, secondPartHeight-30);
         secondPartLayout.draw(canvas);
     }
 
-    public String getCourseName() {
-        return courseName;
+    public CourseInfo getCourseInfo() {
+        return courseInfo;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
+    public void setCourseInfo(CourseInfo courseInfo) {
+        this.courseInfo = courseInfo;
     }
 
-    public String getCourseTeacher() {
-        return courseTeacher;
+    public int[] getRgbColor() {
+        return rgbColor;
     }
 
-    public void setCourseTeacher(String courseTeacher) {
-        this.courseTeacher = courseTeacher;
-    }
-
-    public String getCourseRoom() {
-        return courseRoom;
-    }
-
-    public void setCourseRoom(String courseRoom) {
-        this.courseRoom = courseRoom;
-    }
-
-    public int[] getChapters() {
-        return chapters;
-    }
-
-    public void setChapters(int[] chapters) {
-        this.chapters = chapters;
+    public void setRgbColor(int[] rgbColor) {
+        this.rgbColor = rgbColor;
     }
 }

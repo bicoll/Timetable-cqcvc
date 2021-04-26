@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        app:itemRippleColor="@color/purple_500"
+        app:itemRippleColor="#DEDCDC"
         app:itemTextColor="@color/selector_txt_nav"
         app:menu="@menu/main" />
 </RelativeLayout>

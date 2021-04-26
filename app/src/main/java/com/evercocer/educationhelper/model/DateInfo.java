@@ -1,4 +1,4 @@
-package com.evercocer.educationhelper.other;
+package com.evercocer.educationhelper.model;
 
 public class DateInfo {
     private int Year;
