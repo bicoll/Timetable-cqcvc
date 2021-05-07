@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -20,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.evercocer.educationhelper.R;
 import com.evercocer.educationhelper.model.CourseInfo;
+import com.evercocer.educationhelper.model.DateInfo;
 import com.evercocer.educationhelper.ui.layouts.CourseLayout;
 import com.evercocer.educationhelper.ui.views.ChapterView;
 import com.evercocer.educationhelper.ui.views.CourseView;
@@ -38,7 +38,6 @@ public class TimetableFragment extends Fragment {
     private CourseLayout cl_courseLayout;
     private WeekthView wv_week;
     private ChapterView cv_chapterInfo;
-    private static final String TAG = "MainActivity";
     private DateInfoView dateInfoView;
     private TimetableViewModel viewModel;
     private FragmentActivity fragmentActivity;
@@ -51,62 +50,98 @@ public class TimetableFragment extends Fragment {
         wv_week = view.findViewById(R.id.wv_main_weekth);
         cv_chapterInfo = view.findViewById(R.id.cv_main_chapterInfo);
         dateInfoView = view.findViewById(R.id.div_main_dateInfo);
+        fragmentActivity = getActivity();
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        fragmentActivity = getActivity();
         //初始化ViewModel
-        viewModel = new ViewModelProvider(getActivity()).get(TimetableViewModel.class);
-        //为ChapterView绑定ui数据
-        cv_chapterInfo.setChapterInfo(viewModel.getChapterDateInfo().getValue());
-        //为WeekthView绑定数据
-        wv_week.setWeekTH(viewModel.getWeekTh().getValue());
-        //为DateInfoView绑定数据
-        dateInfoView.setDateInfos(viewModel.getDateInfo().getValue());
-        //为viewModel的json添加监听:数据变化就解析json数据,更新ui
+        viewModel = new ViewModelProvider(fragmentActivity).get(TimetableViewModel.class);
+        //获取ui数据
+        MutableLiveData<String[]> chapterDateInfo = viewModel.getChapterDateInfo();
+        MutableLiveData<String> weekTh = viewModel.getWeekTh();
         MutableLiveData<String> json = viewModel.getJson();
-        json.observe(fragmentActivity, new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                ArrayList<CourseInfo> courseInfos = viewModel.getCourseInfos();
-                if (courseInfos.isEmpty())
-                    courseInfos = viewModel.parseCourseInfo(s);
-                for (int i = 0; i < courseInfos.size(); i++) {
-                    CourseView courseView = new CourseView(fragmentActivity);
-                    courseView.setRgbColor(viewModel.getRandomColor());
-                    courseView.setCourseInfo(courseInfos.get(i));
-                    cl_courseLayout.addView(courseView);
-                }
-            }
-        });
-        //网络加载课表数据
-        if (viewModel.getCourseInfos().size() == 0) {
-            Log.d(TAG, "网络请求");
-            //初始化SharedPreferences
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE);
-            String account_str = sharedPreferences.getString("account", null);
-            String token_str = sharedPreferences.getString("token", null);
-            if (token_str == null) {
-                Toast.makeText(getActivity(), "MainActivity:Token is null!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=" + account_str + "&xnxqid=2020-2021-2&zc=" + viewModel.getWeekTh().getValue();
-            viewModel.loadTimeInfo(url, account_str, token_str, new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
+        MutableLiveData<ArrayList<DateInfo>> dateInfo = viewModel.getDateInfo();
 
+
+        //为ChapterView绑定ui数据
+        cv_chapterInfo.setChapterInfo(chapterDateInfo.getValue());
+
+        //添加监听事件
+        if (weekTh.hasObservers() == false) {
+            weekTh.observe(fragmentActivity, new Observer<String>() {
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    //更新json数据
-                    json.postValue(response.body().string());
+                public void onChanged(String s) {
+                    System.out.println("week改变");
+                    //初始化SharedPreferences的账号数据
+                    SharedPreferences sharedPreferences = fragmentActivity.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    String account_str = sharedPreferences.getString("account", null);
+                    String token_str = sharedPreferences.getString("token", null);
+                    //判空
+                    if (token_str == null) {
+                        Toast.makeText(fragmentActivity, "MainActivity:Token is null!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    //URL
+                    String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=" + account_str + "&xnxqid=2020-2021-2&zc=" + weekTh.getValue();
+                    //POST请求
+                    viewModel.loadTimeInfo(url, account_str, token_str, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            //更新json数据
+                            System.out.println("网络请求");
+                            json.postValue(response.body().string());
+                            viewModel.getCourseInfos().clear();
+                        }
+                    });
                 }
             });
         }
+        if (dateInfo.hasObservers() == false) {
+            dateInfo.observe(fragmentActivity, new Observer<ArrayList<DateInfo>>() {
+                @Override
+                public void onChanged(ArrayList<DateInfo> dateInfos) {
+                    dateInfoView.setDateInfos(dateInfos);
+                    dateInfoView.invalidate();
+                }
+            });
+        }
+        json.observe(TimetableFragment.this, new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                System.out.println("json改变");
+                ArrayList<CourseInfo> courseInfos = viewModel.getCourseInfos();
+                if (courseInfos.isEmpty())
+                    viewModel.parseCourseInfo(s);
+                for (int i = 0; i < courseInfos.size(); i++) {
+                    CourseView courseView = new CourseView(fragmentActivity);
+                    courseView.setCourseInfo(courseInfos.get(i));
+                    cl_courseLayout.addView(courseView);
+                }
+                wv_week.setWeekTH(weekTh.getValue());
+                wv_week.invalidate();
+            }
+        });
+        wv_week.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cl_courseLayout.removeAllViews();
+                String week = String.valueOf(Integer.parseInt(weekTh.getValue()) + 1);
+                weekTh.setValue(week);
+                viewModel.plusWeek();
+            }
+        });
+
+        //为DateInfoView绑定数据
+        dateInfoView.setDateInfos(dateInfo.getValue());
+
     }
 
 }

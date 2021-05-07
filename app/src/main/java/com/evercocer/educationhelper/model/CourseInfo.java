@@ -9,6 +9,16 @@ public class CourseInfo {
     private String classRoom;
     //时间信息：第几节
     private int[] chapterInfo;
+    //RGB颜色
+    private int[] rgbColor;
+
+    public int[] getRgbColor() {
+        return rgbColor;
+    }
+
+    public void setRgbColor(int[] rgbColor) {
+        this.rgbColor = rgbColor;
+    }
 
     public String getCourse() {
         return course;

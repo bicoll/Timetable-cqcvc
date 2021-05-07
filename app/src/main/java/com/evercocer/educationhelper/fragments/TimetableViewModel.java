@@ -21,6 +21,7 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
+
 public class TimetableViewModel extends ViewModel {
     private MutableLiveData<String[]> chapterDateInfo;
     private MutableLiveData<String> weekTh;
@@ -32,6 +33,7 @@ public class TimetableViewModel extends ViewModel {
     private ArrayList<int[]> colors;
     private ArrayList<CourseInfo> courseInfos;
     private Random random;
+    private ArrayList<DateInfo> dateInfos;
 
 
     public ArrayList<CourseInfo> getCourseInfos() {
@@ -65,10 +67,13 @@ public class TimetableViewModel extends ViewModel {
     public MutableLiveData<ArrayList<DateInfo>> getDateInfo() {
         if (dateInfo == null) {
             dateInfo = new MutableLiveData<>();
-
-            ArrayList<DateInfo> dateInfos = new ArrayList<>();
+            if (calendar == null) {
+                calendar = Calendar.getInstance();
+            }
+            dateInfos = new ArrayList<>();
             int beginMonth = calendar.get(Calendar.MONTH) + 1;
             int beginDay = calendar.get(Calendar.DAY_OF_MONTH);
+            System.out.println(beginDay);
             dateInfos.add(new DateInfo(beginMonth, beginDay));
             for (int i = 0; i < 6; i++) {
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -81,9 +86,28 @@ public class TimetableViewModel extends ViewModel {
         return dateInfo;
     }
 
+    public void plusWeek(){
+        dateInfos.clear();
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        calendar.add(Calendar.DAY_OF_MONTH,7);
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        int beginMonth = calendar.get(Calendar.MONTH) + 1;
+        int beginDay = calendar.get(Calendar.DAY_OF_MONTH);
+        System.out.println(beginDay);
+        dateInfos.add(new DateInfo(beginMonth, beginDay));
+        for (int i = 0; i < 6; i++) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            dateInfos.add(new DateInfo(month, day));
+        }
+        dateInfo.setValue(dateInfos);
+    }
     public MutableLiveData<String> getWeekTh() {
         if (weekTh == null) {
-            calendar = Calendar.getInstance();
+            weekTh = new MutableLiveData<>();
+            if (calendar == null)
+                calendar = Calendar.getInstance();
             Date time = calendar.getTime();
             //设置一周的第一天为星期一
             calendar.setFirstDayOfWeek(Calendar.MONDAY);
@@ -100,11 +124,11 @@ public class TimetableViewModel extends ViewModel {
             int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
             //获取当前周是这学期的第几周
             String week = String.valueOf(weekNow - weekBegin);
-            weekTh = new MutableLiveData<>();
             weekTh.setValue(week);
         }
         return weekTh;
     }
+
 
     public MutableLiveData<String[]> getChapterDateInfo() {
         if (chapterDateInfo == null) {
@@ -141,9 +165,9 @@ public class TimetableViewModel extends ViewModel {
 
     //获取随机的颜色
     public int[] getRandomColor() {
-        if (random == null) {
+        if (random == null)
             random = new Random();
-        }
+
         if (colors == null) {
             colors = new ArrayList<>();
             initColor(colors);
@@ -177,7 +201,7 @@ public class TimetableViewModel extends ViewModel {
 
 
     //解析课表信息并刷新CourseView
-    public ArrayList<CourseInfo> parseCourseInfo(String data) {
+    public void parseCourseInfo(String data) {
         if (courseInfos == null) {
             courseInfos = new ArrayList<>();
         }
@@ -209,12 +233,13 @@ public class TimetableViewModel extends ViewModel {
                 }
                 courseInfo.setChapterInfo(chapters);
 
+                //rgb颜色
+                courseInfo.setRgbColor(getRandomColor());
                 courseInfos.add(courseInfo);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return courseInfos;
     }
 
 }

@@ -52,7 +52,8 @@ public class DateInfoView extends View {
         int width = 0;
         String week = "星期";
         Calendar calendar = Calendar.getInstance();
-        int now = calendar.get(Calendar.DAY_OF_MONTH);
+        int cDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int cMonth = calendar.get(Calendar.MONTH)+1 ;
 
         for (int i = 0; i < 7; i++) {
             width = singleWidth * i + 20;
@@ -82,7 +83,7 @@ public class DateInfoView extends View {
             DateInfo dateInfo = dateInfos.get(i);
             mPaint.setTextSize(35);
             mPaint.setColor(Color.rgb(41, 36, 33));
-            if (now == dateInfo.getDay())
+            if (cDay == dateInfo.getDay()&&cMonth == dateInfo.getMonth())
                 mPaint.setColor(Color.BLUE);
             mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 
@@ -90,7 +91,7 @@ public class DateInfoView extends View {
 
             mPaint.setTextSize(25);
             mPaint.setColor(Color.rgb(192, 192, 192));
-            if (now == dateInfo.getDay())
+            if (cDay == dateInfo.getDay()&&cMonth == dateInfo.getMonth())
                 mPaint.setColor(Color.BLUE);
             canvas.drawText(dateInfo.getMonth() + "-" + dateInfo.getDay(), width + 10, height + 30, mPaint);
         }

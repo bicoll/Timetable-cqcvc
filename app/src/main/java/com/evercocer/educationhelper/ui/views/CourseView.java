@@ -45,7 +45,8 @@ public class CourseView extends View {
         int height = getHeight();
         //画圆角矩形背景
         RectF rectF = new RectF(1.25f, 5, width - 1.25f, height - 5);
-        mPaint.setColor(Color.rgb(rgbColor[0], rgbColor[1], rgbColor[2]));
+        rgbColor = courseInfo.getRgbColor();
+        mPaint.setColor(Color.rgb(rgbColor[0],rgbColor[1],rgbColor[2]));
         canvas.drawRoundRect(rectF, 20, 20, mPaint);
 
         //画第一个文本(课程以及授课教师)
@@ -61,10 +62,10 @@ public class CourseView extends View {
         //画第二个文本(授课地点)
         //计算第二个文本的高度
         int firstPartHeight = firstPartLayout.getHeight();
-        int secondPartHeight = ((height - firstPartHeight) / 2)+firstPartHeight;
+        int secondPartHeight = ((height - firstPartHeight) / 2) + firstPartHeight;
         String classRoom = courseInfo.getClassRoom();
         StaticLayout secondPartLayout = StaticLayout.Builder.obtain(classRoom, 0, classRoom.length(), textPaint, width - 10).build();
-        canvas.translate(0, secondPartHeight-30);
+        canvas.translate(0, secondPartHeight - 30);
         secondPartLayout.draw(canvas);
     }
 

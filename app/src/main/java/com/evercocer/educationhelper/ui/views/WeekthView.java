@@ -39,7 +39,7 @@ public class WeekthView extends View {
         mPaint.setStyle(Paint.Style.FILL);
         mPaint.setTextSize(80);
         mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD_ITALIC));
-        canvas.drawText(weekTH, getWidth() / 6, getMeasuredHeight()-20, mPaint);
+        canvas.drawText(weekTH, 5, getMeasuredHeight()-20, mPaint);
 
         mPaint.setTextSize(20);
         mPaint.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
