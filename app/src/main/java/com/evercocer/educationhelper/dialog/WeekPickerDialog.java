@@ -145,8 +145,8 @@ public class WeekPickerDialog extends Dialog {
             dialog.check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dialog.listener.check((String) dialog.title.getText().toString());
                     dialog.dismiss();
+                    dialog.listener.check(dialog.title.getText().toString());
                 }
             });
 

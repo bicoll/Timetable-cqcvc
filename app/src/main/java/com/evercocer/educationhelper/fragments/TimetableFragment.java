@@ -143,6 +143,7 @@ public class TimetableFragment extends Fragment {
         wv_week.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                System.out.println(viewModel.getCurrentWeek());
                 DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
                 WeekPickerDialog weekPickerDialog = new WeekPickerDialog.Builder(fragmentActivity)
                         .setCurrentWeek(viewModel.getCurrentWeek())
@@ -152,9 +153,12 @@ public class TimetableFragment extends Fragment {
                         .setListener(new WeekPickerDialog.Listener() {
                             @Override
                             public void check(String week ){
-                                if (week == weekTh.getValue())
+                                int oldWeek = Integer.parseInt(weekTh.getValue());
+                                int newWeek = Integer.parseInt(week);
+                                if (newWeek ==oldWeek)
                                     return;
-                                    weekTh.postValue(week);
+                                viewModel.flushDateInfo(oldWeek,newWeek);
+                                weekTh.postValue(week);
                             }
                         })
                         .build();
