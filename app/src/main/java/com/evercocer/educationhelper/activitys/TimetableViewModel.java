@@ -1,4 +1,4 @@
-package com.evercocer.educationhelper.fragments;
+package com.evercocer.educationhelper.activitys;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
