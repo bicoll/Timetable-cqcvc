@@ -30,8 +30,8 @@ public class TimetableViewModel extends ViewModel {
 
     private Calendar calendar;
     private OkHttpClient okHttpClient;
-    private ArrayList<int[]> colors;
     private ArrayList<CourseInfo> courseInfos;
+    private ArrayList<int[]> colors;
     private Random random;
     private ArrayList<DateInfo> dateInfos;
 
@@ -106,30 +106,32 @@ public class TimetableViewModel extends ViewModel {
     public MutableLiveData<String> getWeekTh() {
         if (weekTh == null) {
             weekTh = new MutableLiveData<>();
-            if (calendar == null)
-                calendar = Calendar.getInstance();
-            Date time = calendar.getTime();
-            //设置一周的第一天为星期一
-            calendar.setFirstDayOfWeek(Calendar.MONDAY);
-
-            //将日期定位到开学第一天
-            calendar.set(2021, 1, 28);
-            //获取开学时日期这一年的是第几周
-            int weekBegin = calendar.get(Calendar.WEEK_OF_YEAR);
-
-            //将日期定位到当前周星期一
-            calendar.setTime(time);
-            calendar.set(Calendar.DAY_OF_WEEK, 2);
-            //获取当前周是这一年的第几周
-            int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
-            //获取当前周是这学期的第几周
-            String week = String.valueOf(weekNow - weekBegin);
-            weekTh.setValue(week);
+            weekTh.setValue(String.valueOf(getCurrentWeek()));
         }
         return weekTh;
     }
 
 
+    public int getCurrentWeek() {
+        if (calendar == null)
+            calendar = Calendar.getInstance();
+        Date time = calendar.getTime();
+        //设置一周的第一天为星期一
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+        //将日期定位到开学第一天
+        calendar.set(2021, 1, 28);
+        //获取开学时日期这一年的是第几周
+        int weekBegin = calendar.get(Calendar.WEEK_OF_YEAR);
+
+        //将日期定位到当前周星期一
+        calendar.setTime(time);
+        calendar.set(Calendar.DAY_OF_WEEK, 2);
+        //获取当前周是这一年的第几周
+        int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
+        //获取当前周是这学期的第几周
+        return  weekNow - weekBegin;
+    }
     public MutableLiveData<String[]> getChapterDateInfo() {
         if (chapterDateInfo == null) {
             chapterDateInfo = new MutableLiveData<>();

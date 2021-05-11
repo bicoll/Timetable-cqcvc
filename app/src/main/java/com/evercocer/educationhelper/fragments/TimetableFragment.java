@@ -3,7 +3,8 @@ package com.evercocer.educationhelper.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.evercocer.educationhelper.R;
+import com.evercocer.educationhelper.dialog.WeekPickerDialog;
 import com.evercocer.educationhelper.model.CourseInfo;
 import com.evercocer.educationhelper.model.DateInfo;
 import com.evercocer.educationhelper.ui.layouts.CourseLayout;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
 import okhttp3.Response;
 
 public class TimetableFragment extends Fragment {
@@ -74,7 +75,7 @@ public class TimetableFragment extends Fragment {
             weekTh.observe(fragmentActivity, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
-                    System.out.println("week改变");
+                    System.out.println("week改变:"+s);
                     //初始化SharedPreferences的账号数据
                     SharedPreferences sharedPreferences = fragmentActivity.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
                     String account_str = sharedPreferences.getString("account", null);
@@ -95,9 +96,16 @@ public class TimetableFragment extends Fragment {
 
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
+
                             //更新json数据
                             System.out.println("网络请求");
-                            json.postValue(response.body().string());
+                            if (response.body().contentLength() == 0) {
+                                System.out.println("未返回内容");
+                                return;
+                            }
+                            String string = response.body().string();
+                            System.out.println(string);
+                            json.postValue(string);
                             viewModel.getCourseInfos().clear();
                         }
                     });
@@ -117,6 +125,7 @@ public class TimetableFragment extends Fragment {
             @Override
             public void onChanged(String s) {
                 System.out.println("json改变");
+                cl_courseLayout.removeAllViews();
                 ArrayList<CourseInfo> courseInfos = viewModel.getCourseInfos();
                 if (courseInfos.isEmpty())
                     viewModel.parseCourseInfo(s);
@@ -129,13 +138,28 @@ public class TimetableFragment extends Fragment {
                 wv_week.invalidate();
             }
         });
+
+
         wv_week.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cl_courseLayout.removeAllViews();
-                String week = String.valueOf(Integer.parseInt(weekTh.getValue()) + 1);
-                weekTh.setValue(week);
-                viewModel.plusWeek();
+                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                WeekPickerDialog weekPickerDialog = new WeekPickerDialog.Builder(fragmentActivity)
+                        .setCurrentWeek(viewModel.getCurrentWeek())
+                        .setContentView(R.layout.dialog_weekpicker)
+                        .setSize(0, displayMetrics.heightPixels / 3)
+                        .setLocation(Gravity.BOTTOM)
+                        .setListener(new WeekPickerDialog.Listener() {
+                            @Override
+                            public void check(String week ){
+                                if (week == weekTh.getValue())
+                                    return;
+                                    weekTh.postValue(week);
+                            }
+                        })
+                        .build();
+
+                weekPickerDialog.show();
             }
         });
 
