@@ -34,7 +34,9 @@ public class TimetableViewModel extends ViewModel {
     private ArrayList<int[]> colors;
     private Random random;
     private ArrayList<DateInfo> dateInfos;
+    private Date time;
 
+    private int currentWeek;
 
     public ArrayList<CourseInfo> getCourseInfos() {
         if (courseInfos == null) {
@@ -81,19 +83,31 @@ public class TimetableViewModel extends ViewModel {
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
                 dateInfos.add(new DateInfo(month, day));
             }
+
+            //将日历重置到今天
+            calendar.set(Calendar.MONTH, beginMonth - 1);
+            calendar.set(Calendar.DAY_OF_MONTH, beginDay);
             dateInfo.setValue(dateInfos);
         }
         return dateInfo;
     }
 
-    public void plusWeek(){
+    /**
+     * 刷新日期信息
+     * 每次刷新都会将日期定位到查询周的星期一
+     * @param oldWeek
+     * @param newWeek
+     */
+    public void flushDateInfo(int oldWeek, int newWeek) {
+        //清空dteInfos集合
         dateInfos.clear();
-        calendar.set(Calendar.DAY_OF_WEEK, 2);
-        calendar.add(Calendar.DAY_OF_MONTH,7);
+        int change = newWeek - oldWeek;
+        if (change == 0) return;
+        //获取
+        calendar.add(Calendar.DAY_OF_MONTH, 7 * change);
         calendar.set(Calendar.DAY_OF_WEEK, 2);
         int beginMonth = calendar.get(Calendar.MONTH) + 1;
         int beginDay = calendar.get(Calendar.DAY_OF_MONTH);
-        System.out.println(beginDay);
         dateInfos.add(new DateInfo(beginMonth, beginDay));
         for (int i = 0; i < 6; i++) {
             calendar.add(Calendar.DAY_OF_MONTH, 1);
@@ -101,8 +115,12 @@ public class TimetableViewModel extends ViewModel {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
             dateInfos.add(new DateInfo(month, day));
         }
+
+
+        //刷新dateInfo
         dateInfo.setValue(dateInfos);
     }
+
     public MutableLiveData<String> getWeekTh() {
         if (weekTh == null) {
             weekTh = new MutableLiveData<>();
@@ -113,25 +131,29 @@ public class TimetableViewModel extends ViewModel {
 
 
     public int getCurrentWeek() {
-        if (calendar == null)
+        if (calendar == null) {
             calendar = Calendar.getInstance();
-        Date time = calendar.getTime();
-        //设置一周的第一天为星期一
-        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+            time = calendar.getTime();
+            //设置一周的第一天为星期一
+            calendar.setFirstDayOfWeek(Calendar.MONDAY);
 
-        //将日期定位到开学第一天
-        calendar.set(2021, 1, 28);
-        //获取开学时日期这一年的是第几周
-        int weekBegin = calendar.get(Calendar.WEEK_OF_YEAR);
+            //将日期定位到开学第一天
+            calendar.set(2021, 1, 28);
+            //获取开学时日期这一年的是第几周
+            int weekBegin = calendar.get(Calendar.WEEK_OF_YEAR);
 
-        //将日期定位到当前周星期一
-        calendar.setTime(time);
-        calendar.set(Calendar.DAY_OF_WEEK, 2);
-        //获取当前周是这一年的第几周
-        int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
-        //获取当前周是这学期的第几周
-        return  weekNow - weekBegin;
+            //将日期定位到当前周星期一
+            calendar.setTime(time);
+            calendar.set(Calendar.DAY_OF_WEEK, 2);
+
+            //获取当前周是这一年的第几周
+            int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
+            //获取当前周是这学期的第几周
+            currentWeek = weekNow - weekBegin;
+        }
+        return currentWeek;
     }
+
     public MutableLiveData<String[]> getChapterDateInfo() {
         if (chapterDateInfo == null) {
             chapterDateInfo = new MutableLiveData<>();
