@@ -94,7 +94,6 @@ public class TimetableActivity extends AppCompatActivity {
                                 return;
                             }
                             String string = response.body().string();
-                            System.out.println(string);
                             json.postValue(string);
                             viewModel.getCourseInfos().clear();
                         }
