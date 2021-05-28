@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         //初始化ViewModel
         model = new ViewModelProvider(LoginActivity.this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LoginViewModel.class);
         //初始化Intent
-        intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent = new Intent(LoginActivity.this, TimetableActivity.class);
         //初始化SharedPreferences
         sharedPreferences = getSharedPreferences("userInfo", MODE_PRIVATE);
         //初始化按钮监听事件

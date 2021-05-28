@@ -1,19 +1,15 @@
-package com.evercocer.educationhelper.fragments;
+package com.evercocer.educationhelper.activitys;
+
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,31 +31,25 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class TimetableFragment extends Fragment {
+public class TimetableActivity extends AppCompatActivity {
     private CourseLayout cl_courseLayout;
     private WeekthView wv_week;
     private ChapterView cv_chapterInfo;
     private DateInfoView dateInfoView;
     private TimetableViewModel viewModel;
-    private FragmentActivity fragmentActivity;
+    private static final String TAG = "TimetableActivity";
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_timetable, container, false);
-        cl_courseLayout = view.findViewById(R.id.cl_main_courseLayout);
-        wv_week = view.findViewById(R.id.wv_main_weekth);
-        cv_chapterInfo = view.findViewById(R.id.cv_main_chapterInfo);
-        dateInfoView = view.findViewById(R.id.div_main_dateInfo);
-        fragmentActivity = getActivity();
-        return view;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        intViews();
+        load();
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void load() {
         //初始化ViewModel
-        viewModel = new ViewModelProvider(fragmentActivity).get(TimetableViewModel.class);
+        viewModel = new ViewModelProvider(this).get(TimetableViewModel.class);
         //获取ui数据
         MutableLiveData<String[]> chapterDateInfo = viewModel.getChapterDateInfo();
         MutableLiveData<String> weekTh = viewModel.getWeekTh();
@@ -72,17 +62,17 @@ public class TimetableFragment extends Fragment {
 
         //添加监听事件
         if (weekTh.hasObservers() == false) {
-            weekTh.observe(fragmentActivity, new Observer<String>() {
+            weekTh.observe(this, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
                     System.out.println("week改变:"+s);
                     //初始化SharedPreferences的账号数据
-                    SharedPreferences sharedPreferences = fragmentActivity.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = TimetableActivity.this.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
                     String account_str = sharedPreferences.getString("account", null);
                     String token_str = sharedPreferences.getString("token", null);
                     //判空
                     if (token_str == null) {
-                        Toast.makeText(fragmentActivity, "MainActivity:Token is null!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TimetableActivity.this, "TimetableActivity:Token is null!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     //URL
@@ -104,7 +94,6 @@ public class TimetableFragment extends Fragment {
                                 return;
                             }
                             String string = response.body().string();
-                            System.out.println(string);
                             json.postValue(string);
                             viewModel.getCourseInfos().clear();
                         }
@@ -113,7 +102,7 @@ public class TimetableFragment extends Fragment {
             });
         }
         if (dateInfo.hasObservers() == false) {
-            dateInfo.observe(fragmentActivity, new Observer<ArrayList<DateInfo>>() {
+            dateInfo.observe(this, new Observer<ArrayList<DateInfo>>() {
                 @Override
                 public void onChanged(ArrayList<DateInfo> dateInfos) {
                     dateInfoView.setDateInfos(dateInfos);
@@ -121,7 +110,7 @@ public class TimetableFragment extends Fragment {
                 }
             });
         }
-        json.observe(TimetableFragment.this, new Observer<String>() {
+        json.observe(this, new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 System.out.println("json改变");
@@ -130,7 +119,7 @@ public class TimetableFragment extends Fragment {
                 if (courseInfos.isEmpty())
                     viewModel.parseCourseInfo(s);
                 for (int i = 0; i < courseInfos.size(); i++) {
-                    CourseView courseView = new CourseView(fragmentActivity);
+                    CourseView courseView = new CourseView(TimetableActivity.this);
                     courseView.setCourseInfo(courseInfos.get(i));
                     cl_courseLayout.addView(courseView);
                 }
@@ -145,7 +134,7 @@ public class TimetableFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println(viewModel.getCurrentWeek());
                 DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                WeekPickerDialog weekPickerDialog = new WeekPickerDialog.Builder(fragmentActivity)
+                WeekPickerDialog weekPickerDialog = new WeekPickerDialog.Builder(TimetableActivity.this)
                         .setCurrentWeek(viewModel.getCurrentWeek())
                         .setContentView(R.layout.dialog_weekpicker)
                         .setSize(0, displayMetrics.heightPixels / 3)
@@ -170,6 +159,14 @@ public class TimetableFragment extends Fragment {
         //为DateInfoView绑定数据
         dateInfoView.setDateInfos(dateInfo.getValue());
 
+    }
+
+
+    private void intViews() {
+        cl_courseLayout = findViewById(R.id.cl_main_courseLayout);
+        wv_week =findViewById(R.id.wv_main_weekth);
+        cv_chapterInfo = findViewById(R.id.cv_main_chapterInfo);
+        dateInfoView = findViewById(R.id.div_main_dateInfo);
     }
 
 }
