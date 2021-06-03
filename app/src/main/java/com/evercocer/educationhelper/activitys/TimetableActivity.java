@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
@@ -23,12 +24,15 @@ import com.evercocer.educationhelper.ui.views.ChapterView;
 import com.evercocer.educationhelper.ui.views.CourseView;
 import com.evercocer.educationhelper.ui.views.DateInfoView;
 import com.evercocer.educationhelper.ui.views.WeekthView;
+import com.evercocer.educationhelper.utils.OkHttpUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Request;
 import okhttp3.Response;
 
 public class TimetableActivity extends AppCompatActivity {
@@ -37,7 +41,6 @@ public class TimetableActivity extends AppCompatActivity {
     private ChapterView cv_chapterInfo;
     private DateInfoView dateInfoView;
     private TimetableViewModel viewModel;
-    private static final String TAG = "TimetableActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class TimetableActivity extends AppCompatActivity {
     }
 
     private void load() {
+
         //初始化ViewModel
         viewModel = new ViewModelProvider(this).get(TimetableViewModel.class);
         //获取ui数据
@@ -65,7 +69,7 @@ public class TimetableActivity extends AppCompatActivity {
             weekTh.observe(this, new Observer<String>() {
                 @Override
                 public void onChanged(String s) {
-                    System.out.println("week改变:"+s);
+                    System.out.println("week改变:" + s);
                     //初始化SharedPreferences的账号数据
                     SharedPreferences sharedPreferences = TimetableActivity.this.getSharedPreferences("userInfo", Context.MODE_PRIVATE);
                     String account_str = sharedPreferences.getString("account", null);
@@ -77,15 +81,18 @@ public class TimetableActivity extends AppCompatActivity {
                     }
                     //URL
                     String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=" + account_str + "&xnxqid=2020-2021-2&zc=" + weekTh.getValue();
-                    //POST请求
-                    viewModel.loadTimeInfo(url, account_str, token_str, new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            e.printStackTrace();
-                        }
 
+                    //POST请求
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .post(new FormBody.Builder().build())
+                            .addHeader("token",token_str)
+                            .build();
+
+
+                    OkHttpUtil.getInstance().post(request, new OkHttpUtil.CallBack() {
                         @Override
-                        public void onResponse(Call call, Response response) throws IOException {
+                        public void onSuccess(Call call, Response response) throws IOException {
 
                             //更新json数据
                             System.out.println("网络请求");
@@ -97,7 +104,13 @@ public class TimetableActivity extends AppCompatActivity {
                             json.postValue(string);
                             viewModel.getCourseInfos().clear();
                         }
+
+                        @Override
+                        public void onFailed(IOException e) {
+                            e.printStackTrace();
+                        }
                     });
+
                 }
             });
         }
@@ -141,12 +154,12 @@ public class TimetableActivity extends AppCompatActivity {
                         .setLocation(Gravity.BOTTOM)
                         .setListener(new WeekPickerDialog.Listener() {
                             @Override
-                            public void check(String week ){
+                            public void check(String week) {
                                 int oldWeek = Integer.parseInt(weekTh.getValue());
                                 int newWeek = Integer.parseInt(week);
-                                if (newWeek ==oldWeek)
+                                if (newWeek == oldWeek)
                                     return;
-                                viewModel.flushDateInfo(oldWeek,newWeek);
+                                viewModel.flushDateInfo(oldWeek, newWeek);
                                 weekTh.postValue(week);
                             }
                         })
@@ -164,7 +177,7 @@ public class TimetableActivity extends AppCompatActivity {
 
     private void intViews() {
         cl_courseLayout = findViewById(R.id.cl_main_courseLayout);
-        wv_week =findViewById(R.id.wv_main_weekth);
+        wv_week = findViewById(R.id.wv_main_weekth);
         cv_chapterInfo = findViewById(R.id.cv_main_chapterInfo);
         dateInfoView = findViewById(R.id.div_main_dateInfo);
     }

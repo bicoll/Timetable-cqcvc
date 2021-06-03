@@ -55,17 +55,6 @@ public class TimetableViewModel extends ViewModel {
         }
         return json;
     }
-
-    public void loadTimeInfo(String url, String account, String token, Callback callback) {
-        if (okHttpClient == null)
-            okHttpClient = new OkHttpClient();
-
-        FormBody formBody = new FormBody.Builder().build();
-        Request request = new Request.Builder().url(url).post(formBody).addHeader("token", token).build();
-        Call call = okHttpClient.newCall(request);
-        call.enqueue(callback);
-    }
-
     public MutableLiveData<ArrayList<DateInfo>> getDateInfo() {
         if (dateInfo == null) {
             dateInfo = new MutableLiveData<>();
