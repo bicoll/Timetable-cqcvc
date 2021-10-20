@@ -80,7 +80,7 @@ public class TimetableActivity extends AppCompatActivity {
                         return;
                     }
                     //URL
-                    String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=" + account_str + "&xnxqid=2020-2021-2&zc=" + weekTh.getValue();
+                    String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=getKbcxAzc&xh=" + account_str + "&xnxqid=2021-2022-1&zc=" + weekTh.getValue();
 
                     //POST请求
                     Request request = new Request.Builder()
@@ -97,7 +97,9 @@ public class TimetableActivity extends AppCompatActivity {
                             //更新json数据
                             System.out.println("网络请求");
                             if (response.body().contentLength() == 0) {
-                                System.out.println("未返回内容");
+                                runOnUiThread(()->{
+                                    Toast.makeText(TimetableActivity.this,"暂无第"+weekTh.getValue()+"周的信息",Toast.LENGTH_SHORT).show();
+                                });
                                 return;
                             }
                             String string = response.body().string();

@@ -68,7 +68,7 @@ public class WeekPickerDialog extends Dialog {
                 index++;
                 ItemPickView itemPickView = new ItemPickView(getContext());
 
-                if (index > 18)
+                if (index > 20)
                     itemPickView.setVisibility(View.GONE);
                 if (index < currentWeek)
                     itemPickView.setPassed(true);

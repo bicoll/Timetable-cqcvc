@@ -28,7 +28,6 @@ import okhttp3.Response;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText userName;
-    private EditText passWord;
     private Button login;
 
     private SharedPreferences sharedPreferences;
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     private void init() {
         //获取View的引用
         userName = findViewById(R.id.username);
-        passWord = findViewById(R.id.password);
         login = findViewById(R.id.login);
         //初始化ViewModel
         model = new ViewModelProvider(LoginActivity.this, new ViewModelProvider.AndroidViewModelFactory(getApplication())).get(LoginViewModel.class);
@@ -67,10 +65,9 @@ public class LoginActivity extends AppCompatActivity {
                 MutableLiveData<String> password = model.getPassword();
                 //更新数据
                 account.setValue(userName.getText().toString());
-                password.setValue(passWord.getText().toString());
                 //加载用户Token
                 String url = "http://edu.cqcvc.com.cn:800/app/app.ashx?method=authUser";
-                url += "&xh=" + account.getValue() + "&pwd=" + password.getValue();
+                url += "&xh=" + account.getValue() /*+ "&pwd=" + password.getValue()*/;
                 model.loadToken(url, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {

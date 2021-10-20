@@ -127,7 +127,7 @@ public class TimetableViewModel extends ViewModel {
             calendar.setFirstDayOfWeek(Calendar.MONDAY);
 
             //将日期定位到开学第一天
-            calendar.set(2021, 1, 28);
+            calendar.set(2021, 8, 10);
             //获取开学时日期这一年的是第几周
             int weekBegin = calendar.get(Calendar.WEEK_OF_YEAR);
 
@@ -139,6 +139,7 @@ public class TimetableViewModel extends ViewModel {
             int weekNow = calendar.get(Calendar.WEEK_OF_YEAR);
             //获取当前周是这学期的第几周
             currentWeek = weekNow - weekBegin;
+            System.out.println("currentWeek = " + currentWeek);
         }
         return currentWeek;
     }
